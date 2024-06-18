@@ -1,6 +1,6 @@
 #' @importFrom dplyr group_by ungroup mutate filter select slice %>% n
 #' @importFrom reshape2 melt acast
-#' @importFrom stats as.formula stepfun
+#' @importFrom stats as.formula stepfun dexp runif
 #' @importFrom rlang .data
 NULL
 
