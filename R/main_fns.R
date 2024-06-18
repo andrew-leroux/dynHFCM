@@ -1,6 +1,6 @@
 #' @importFrom dplyr group_by ungroup mutate filter select slice %>% n
 #' @importFrom reshape2 melt acast
-#' @importFrom stats as.formula
+#' @importFrom stats as.formula stepfun
 #' @importFrom rlang .data
 NULL
 
@@ -129,3 +129,22 @@ make_lm_data <- function(data, vars_tv, vars_tf, id, event_time, time, S,
 
         data_lm
 }
+
+
+#' Function for creating the landmark dataset
+#' @param fit fitter LM-HFLCM
+#' @param s length 1 numeric vector indicating landmark time
+#' @param tpred numeric vector of predictor times to evaluate the cumulative hazard function
+#'
+#' @export
+predict_lm_cumulative_hazard <- function(fit, s, tpred){
+  inx_s   <- which(fit$family$data$tr.strat == s)
+  tind    <- fit$family$data$tr[inx_s]
+  Lambda0 <- fit$family$data$h[inx_s]
+
+  est <- data.frame(tind=rev(tind), Lambda0=rev(Lambda0))
+  est_fn <- stats::stepfun(est$tind, c(0,est$Lambda0))
+
+  est_fn(tpred)
+}
+
