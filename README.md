@@ -7,4 +7,4 @@ The dynHFCM package is an R package which facilitates estimation and prediction 
 devtools::install_github("andrew-leroux/dynHFCM")
 ```
 
-Package vignettes can be found at \url{https://andrew-leroux.github.io/dynHFCM/}
+Package vignettes can be found at https://andrew-leroux.github.io/dynHFCM/
