@@ -37,6 +37,8 @@ make_lm_data(
 \item{censor_var}{character vector of length 1 indicating event indicator variable. This variable must be coded as 1=event, 0=censor}
 
 \item{w}{numeric vector of prediction windows (w). Must be either length 1 or same length as the vector of landmark times (s)}
+
+\item{center}{logical indicating whether to also return landmark mean-centered functional predictors (only works for regularly observed data currently)}
 }
 \description{
 Function for creating the landmark dataset

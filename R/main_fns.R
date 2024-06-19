@@ -15,6 +15,7 @@ NULL
 #' @param wide logical indicating whether data supplied to the function are in wide format (FALSE) or long format (TRUE)
 #' @param censor_var character vector of length 1 indicating event indicator variable. This variable must be coded as 1=event, 0=censor
 #' @param w numeric vector of prediction windows (w). Must be either length 1 or same length as the vector of landmark times (s)
+#' @param center logical indicating whether to also return landmark mean-centered functional predictors (only works for regularly observed data currently)
 #'
 #' @export
 make_lm_data <- function(data, vars_tv, vars_tf, id, event_time, time, S,
@@ -125,6 +126,36 @@ make_lm_data <- function(data, vars_tv, vars_tf, id, event_time, time, S,
         inx_keep <- which(rowSums(!na_mat , na.rm=TRUE) >= 1)
         data_lm <- data_lm[inx_keep,,drop=FALSE]
         data_lm <- filter(data_lm, s < event_time_lm)
+
+          # center the  functional predictor at each landmark time in the training data and
+          nT <- ncol(data_lm$Z)
+          uS <- sort(unique(data_lm$s[data_lm$id]))
+          nS <- length(uS)
+          tind_obs <- sort(unique(data[[time]]))
+
+          # divide by a constant corresponding to Riemann integration
+          # gap between observations of the functional predictor
+          dt <- diff(tind_obs[tind_obs <= max(uS)])
+          # small mass we add to be able to evaluate the integral of the historical term at the baseline
+          c0 <- mean(dt)
+
+          data_lm$Z_int_cn <-
+            I(matrix(NA_real_, ncol = nT, nrow = nrow(data_lm)))
+          for(j in seq_along(uS)){
+            inx_j  <- which(data_lm$s == uS[j])
+            n_j    <- length(inx_j)
+            # calculate mean at each landmark time
+            inx_j  <- which(data_lm$s == uS[j])
+            mu_Z_j       <- matrix(colMeans(data_lm$Z[inx_j,]), nrow=1) %x% matrix(1, nrow=n_j, ncol=1)
+            # center and set up the integration matrix
+            c_j    <- sum(tind_obs <= uS[j])
+            Z_j_cn <- (data_lm$Z[inx_j,] - mu_Z_j) * (matrix(1, nrow=n_j, ncol=1) %x% matrix(c(c0, dt), nrow=1))
+            data_lm$Z_int_cn[inx_j,] <- Z_j_cn
+          }
+        # replace missing values in the time and functional predictor matrices with 0s
+        # the choice here is not entirely arbitrary as the model will attempt to estimate the coefficient at these points
+        inx_na <- is.na(data_lm$tind)
+        data_lm$tind[inx_na] <- data_lm$Z_int_cn[inx_na] <- 0
 
 
         data_lm
