@@ -1,0 +1,10 @@
+pandoc: 2.17.1.1
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  lm_hflm_estimation_prediction: lm_hflm_estimation_prediction.html
+last_built: 2024-06-19T02:20Z
+urls:
+  reference: https://andrew-leroux.github.io/dynHFCM/reference
+  article: https://andrew-leroux.github.io/dynHFCM/articles
+
