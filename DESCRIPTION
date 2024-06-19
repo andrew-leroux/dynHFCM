@@ -23,3 +23,4 @@ Suggests:
     fields,
     mgcv
 VignetteBuilder: knitr
+URL: https://andrew-leroux.github.io/dynHFCM/
