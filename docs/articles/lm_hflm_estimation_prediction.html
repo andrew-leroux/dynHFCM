@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Leroux</h4>
             
-            <h4 data-toc-skip class="date">2024-06-18</h4>
+            <h4 data-toc-skip class="date">2024-07-02</h4>
       
       
       <div class="d-none name"><code>lm_hflm_estimation_prediction.Rmd</code></div>
@@ -305,13 +305,13 @@ models is extremely fast.</p>
 <span><span class="va">st_time_lm_w1</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">fit_lm_w1</span> <span class="op">&lt;-</span> <span class="fu">gam</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">event_time_lm</span>, <span class="va">s</span><span class="op">)</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">tind</span>, <span class="va">smat</span>, by<span class="op">=</span><span class="va">Z_int_cn</span><span class="op">)</span>, family<span class="op">=</span><span class="va">cox.ph</span>, weights<span class="op">=</span><span class="va">event_lm</span>, data<span class="op">=</span><span class="va">data_lm_w1</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">fit_time_lm_w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">st_time_lm_w1</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 0.06673228 mins</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 0.06654216 mins</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fit landmark model with w=infinity</span></span>
 <span><span class="va">st_time_lm_w2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">fit_lm_w2</span> <span class="op">&lt;-</span> <span class="fu">gam</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">event_time_lm</span>, <span class="va">s</span><span class="op">)</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">tind</span>, <span class="va">smat</span>, by<span class="op">=</span><span class="va">Z_int_cn</span><span class="op">)</span>, family<span class="op">=</span><span class="va">cox.ph</span>, weights<span class="op">=</span><span class="va">event_lm</span>, data<span class="op">=</span><span class="va">data_lm_w2</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">fit_time_lm_w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">st_time_lm_w2</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 0.06799162 mins</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 0.06848052 mins</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -362,6 +362,202 @@ long prediction window.</p>
 <span>  <span class="fu">scale_fill_gradientn</span><span class="op">(</span>colours<span class="op">=</span><span class="fu">fields</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fields/man/tim.colors.html" class="external-link">tim.colors</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">xlab</span><span class="op">(</span><span class="st">"Historical Time (u)"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Landmark Time (s)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="lm_hflm_estimation_prediction_files/figure-html/plot_estimated_coefficients-1.png" width="1440"></p>
+</div>
+<div class="section level3">
+<h3 id="dynamic-predictions-for-survival-curves">Dynamic predictions for survival curves<a class="anchor" aria-label="anchor" href="#dynamic-predictions-for-survival-curves"></a>
+</h3>
+<p>In addition to extracting the estimated shape of the functional
+coefficient, dynamic predictions of survival probabilities are often of
+interest and a key focus of the methodology.</p>
+<p>Dynamic predictions obtained from the landmark historical functional
+Cox model are dependent on the landmark times (<span class="math inline">\(\mathbf{s}\)</span>) window lengths, <span class="math inline">\(\mathbf{w}=\{w_1,\ldots,w_L\}\)</span>, and how
+far into the future dynamic predictions are made. If one is only
+interested in making dynamic predictions within a landmark
+time/prediciton window combination (i.e., for <span class="math inline">\(s_l &lt; t^* \leq s_l + w_l\)</span>), refereed
+hereafter as “within window” predictions, then</p>
+<p><span class="math display">\[\hat{S}(t^*|X_i, Z_i^{\mathcal{H}}(s_l))
+= \text{exp}\left\{-e^{X\hat{\beta}(s_l) + \int_{0}^{s_l}
+Z(u)\hat{\gamma}(u,s_l)du} \int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt
+\right\}\;,\]</span></p>
+<p>where <span class="math inline">\(\hat{\beta}\)</span> and <span class="math inline">\(\hat{\gamma}\)</span> are estimates from the model
+fit and <span class="math inline">\(\int_{s_l}^{t^*}
+\hat{\lambda}_0(t|s_l)dt\)</span> is an estimate of the cumulative
+baseline hazard. We first show how to obtain these predictions from the
+fitted object for both of our example landmark models and then move on
+to describe how to make dynamic predictions for <span class="math inline">\(t^* &gt; s_l + w_l\)</span>. dNote that for our
+second landmark model with <span class="math inline">\(w=\infty\)</span>, dynamic predictions can me made
+for all <span class="math inline">\(t^*\)</span> using the formula
+above.</p>
+<div class="section level4">
+<h4 id="within-window-dynamic-predictions">Within window dynamic predictions<a class="anchor" aria-label="anchor" href="#within-window-dynamic-predictions"></a>
+</h4>
+<p>There are multiple ways to extract within-window dynamic predictions
+using Cox regression models estimated via the <em>mgcv</em> package.
+Here we will show several methods. The first step in any approach is to
+set up the data frame which will be supplied to the
+<strong>predict.gam</strong> function.</p>
+<p>For simplicity we start by considering a single landmark time, <span class="math inline">\(s_3 = 0.04\)</span>. Suppose we wish to make
+predictions for a set of <span class="math inline">\(\mathbf{t}^* =
+\{t_1^*, \ldots, t_Q^*\}\)</span> such that <span class="math inline">\(s_3 &lt; t^* &lt; s_3 + w_3\)</span> <span class="math inline">\(\forall t \in \mathbf{t}^*\)</span> with <span class="math inline">\(w_3 = 0.02\)</span> (landmark model 1). The data
+should contain one row per participant with <span class="math inline">\(T_i &gt; s_3\)</span> per element of <span class="math inline">\(\mathbf{t}^*\)</span>. In our example, the number
+of individuals in the risk set at <span class="math inline">\(s_3\)</span> is <span class="math inline">\(|R(s_3)| = |R(0.04)| = 950\)</span> (see code
+below). And suppose we wish to make predictions on a fine grid in <span class="math inline">\((s_3,s_3 + w_3)\)</span> to plot individual
+survival curves. Recall that the model uses stratified Cox regression,
+allowing each landmark to have a landmark-specific baseline hazard
+estimate, estimated using the Breslow estimator, a step function. As
+such, the survival curves only change for <span class="math inline">\(t^* \in \{T_i : d_i = 1, 1 \leq i \leq N
+\}\)</span>.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## get a data frame with one row per participant from the original data</span></span>
+<span><span class="va">hfcm_sim_data_surv</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="va">hfcm_sim_data</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">slice</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## how many participants have an event or are censored beyond s_3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">hfcm_sim_data_surv</span><span class="op">$</span><span class="cn">T</span> <span class="op">&gt;</span> <span class="va">S</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="co">## 950</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 950</span></span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## set grid of points to obtain predictions on</span></span>
+<span><span class="va">t_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">S</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, <span class="va">S</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">+</span> <span class="va">W1</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, len<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<p>Returning to the software implementation to get dynamic predictions,
+we need to create a data frame where each row contains the components
+required for model fitting associated with <span class="math inline">\(Z_i^{\mathcal{H}}(s_3)\)</span> for all <span class="math inline">\(i \in R(s_3)\)</span>, as well as the landmark
+information and prediction time. Luckily, for this simple case, the data
+object returned by the <strong>make_lm_data</strong> function can be
+used here as it contains all the components the model required to obtain
+predictions with the exception of the prediction times of interest. We
+create the desired data frame by subsetting the data object returned by
+the <strong>make_lm_data</strong> to those participants in <span class="math inline">\(R(s_3)\)</span>, creating a separate data frame
+with all combinations of <span class="math inline">\(i\)</span> and
+<span class="math inline">\(\mathbf{t}^*\)</span>, left joining the data
+frames, then filtering out <span class="math inline">\(t \notin
+\mathbf{t}^*\)</span>. The code below sets up this data frame.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## get s_3 data</span></span>
+<span><span class="va">data_lm_S3</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="va">data_lm_w1</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="co">## filter to just landmark time of interest</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">s</span> <span class="op">==</span> <span class="va">S</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">## create data frame with all unique combinations of:</span></span>
+<span><span class="co">##  each id in the risk set and prediction time of interest</span></span>
+<span><span class="va">df_t_star_s_3</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">data_lm_S3</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>              event_time_lm <span class="op">=</span> <span class="va">t_star</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_lm_S3_pred</span> <span class="op">&lt;-</span></span>
+<span>  <span class="co">## left join the data frames</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">df_t_star_s_3</span>, </span>
+<span>            <span class="co">## drop observed event times in the data, unneeded for prediction</span></span>
+<span>            <span class="co">## this functionally filters out prediction times not of interest</span></span>
+<span>            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data_lm_S3</span>, <span class="op">-</span><span class="va">event_time_lm</span><span class="op">)</span>, by<span class="op">=</span><span class="st">"id"</span><span class="op">)</span> </span></code></pre></div>
+<p>Having set up the data frame, obtaining survival curves is as simple
+as making a call to <strong>predict.gam</strong> with the argument
+type=“response” (indicating predictions on the response scale, or
+survival probability). We then merge those predictions back with
+participant ids and event times for plotting</p>
+<p>The code below plots survival curve estimates for the first 12
+participant ids</p>
+<p>This same idea can be applied to get within window predictions,
+conditional survival probability predictions for every landmark time at
+once by considering all combinations of landmark times, prediction
+windows, participant ids, prediction times, and observed event times.
+Then merge that data with the landmark data set. Unfortunately this will
+tend to create a very large data frame that may exceed RAM limits for
+many common work environments. Here, we bypass this issue by only
+looking making predictions for the first 25 participant id’s. This
+procedure could be split by participant id, landmark time, or any split
+desired by the user depending on their purpose and computational
+limitations..</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## create data frame with all unique combinations of:</span></span>
+<span><span class="co">##  each id in the risk set and prediction time of interest</span></span>
+<span><span class="co">## all observed event times and a sequence of points on the range of T</span></span>
+<span><span class="va">t_star_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">hfcm_sim_data</span><span class="op">$</span><span class="cn">T</span><span class="op">[</span><span class="va">hfcm_sim_data</span><span class="op">$</span><span class="va">E</span><span class="op">==</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, </span>
+<span>                             <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,len<span class="op">=</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span> </span>
+<span>                           <span class="op">)</span></span>
+<span>                   <span class="op">)</span></span>
+<span><span class="va">data_lm_all_pred</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">hfcm_sim_data</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span>,</span>
+<span>              s <span class="op">=</span> <span class="va">S</span>,</span>
+<span>              event_time_lm <span class="op">=</span> <span class="va">t_star_all</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="co">## join with survival data, filter to times before observed events</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">hfcm_sim_data_surv</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">s</span> <span class="op">&lt;</span> <span class="cn">T</span>, <span class="va">event_time_lm</span> <span class="op">&gt;=</span> <span class="va">s</span>, <span class="va">event_time_lm</span> <span class="op">&lt;=</span> <span class="va">s</span> <span class="op">+</span> <span class="fl">0.02</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="co">## get just variables of interest</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">s</span>, <span class="va">event_time_lm</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="co">## convert variable type for merging</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="co">## join with landmark dataset</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data_lm_w1</span> , <span class="op">-</span><span class="va">event_time_lm</span><span class="op">)</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"id"</span>,<span class="st">"s"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Joining with `by = join_by(id)`</span></span></code></pre>
+<p>Then we get predictions in the exact same way as before</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv_preds_all</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu">predict.gam</span><span class="op">(</span><span class="va">fit_lm_w1</span>, newdata<span class="op">=</span><span class="va">data_lm_all_pred</span>, type<span class="op">=</span><span class="st">'response'</span><span class="op">)</span></span>
+<span><span class="co">## combine with prediction data frame for plotting (participant IDs with event times and predictions)</span></span>
+<span><span class="va">surv_preds_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data_lm_all_pred</span>, <span class="va">id</span>, <span class="va">event_time_lm</span>, <span class="va">s</span><span class="op">)</span>, <span class="st">"S_hat"</span> <span class="op">=</span> <span class="va">surv_preds_all</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">surv_preds_all</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'data.frame':    5159 obs. of  4 variables:</span></span>
+<span><span class="co">##  $ id           : Factor w/ 1000 levels "1","2","3","4",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">##  $ event_time_lm: num  0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">##  $ s            : num  0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">##  $ S_hat        : num  1 1 1 1 1 1 1 1 1 1 ...</span></span></code></pre>
+<p>We can now plot the landmark-specific conditional probability of
+survival for each participant id. In the plot below each panel
+represents a participant, with color indicating landmark time. A few
+things are worth noting. First, the scale is hard to see due to
+differential predicted survival probabilities for participant id 13 and
+19 for later landmark times. Additionally, note the fact that the
+survival probabilities are not non-increasing. This is because these are
+conditional probabilties and are thus “reset” at 1 for each landmark
+time. Further, note that survival predictions are not available over the
+entire follow-up for all individuals. This is a result of their being
+censored or experiencing the event. In the absence of longitudinal data,
+predictions beyond <span class="math inline">\(\text{max_{s \in
+\mathbf{s}}(s: s &lt; T_i)}\)</span> require dynamic prediction of the
+longitudinal predictor (a topic for a future vignette).</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv_preds_all</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>s <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">event_time_lm</span>, y<span class="op">=</span><span class="va">S_hat</span>, color<span class="op">=</span><span class="va">s</span>, group<span class="op">=</span><span class="va">s</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, ncol<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ylab</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu">Pr</span><span class="op">(</span><span class="cn">T</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">t</span><span class="op">~</span><span class="st">"|"</span> <span class="op">~</span> <span class="cn">T</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">s</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Event time (t)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="lm_hflm_estimation_prediction_files/figure-html/dynamic_prediction_plot_all-1.png" width="1440"></p>
+<p>However, we can obtain complete predicted survival curves (at least
+for fully observed data). The code below implements the method described
+in the manuscript.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv_preds_all_comp</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="va">surv_preds_all</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">s</span>, <span class="va">event_time_lm</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>delta_s <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         S_hat_lag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">S_hat</span><span class="op">[</span><span class="op">-</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>         mult_fac <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">delta_s</span> <span class="op">!=</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">delta_s</span><span class="op">)</span>, <span class="va">S_hat_lag</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>         mult_fac <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumprod</a></span><span class="op">(</span><span class="va">mult_fac</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">id</span>, <span class="va">s</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>mult_fac <span class="op">=</span> <span class="va">mult_fac</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>         S_hat_full <span class="op">=</span> <span class="va">S_hat</span> <span class="op">*</span> <span class="va">mult_fac</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">id</span>, <span class="va">s</span>, <span class="va">event_time_lm</span><span class="op">)</span> </span></code></pre></div>
+<p>Then we can plot <span class="math inline">\(\hat{P}(T_i &gt;
+t)\)</span> as before, with each panel representing a unique participant
+identifier.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv_preds_all_comp</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>s <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">event_time_lm</span>, y<span class="op">=</span><span class="va">S_hat_full</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">id</span>, ncol<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ylab</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu">Pr</span><span class="op">(</span><span class="cn">T</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Event time (t)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="lm_hflm_estimation_prediction_files/figure-html/surv_curves_full_plot-1.png" width="1440"></p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

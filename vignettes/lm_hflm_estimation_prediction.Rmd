@@ -193,7 +193,7 @@ If one is only interested in making dynamic predictions within a landmark time/p
 
 $$\hat{S}(t^*|X_i, Z_i^{\mathcal{H}}(s_l)) = \text{exp}\left\{-e^{X\hat{\beta}(s_l) + \int_{0}^{s_l} Z(u)\hat{\gamma}(u,s_l)du} \int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt \right\}\;,$$ 
 
-where $\hat{\beta}$ and $\hat{\gamma}$ are estimates from the model fit and $\int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt$ is an estimate of the cumulative baseline hazard. We first show how to obtain these predictions from the fitted object for both of our example landmark models and then move on to describe how to make dynamic predictions for  $t^* > s_l + w_l$.  dNote that for our second landmark model with $w=\infty$, dynamic predictions can me made for all $t^*$ using the formula above.
+where $\hat{\beta}$ and $\hat{\gamma}$ are estimates from the model fit and $\int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt$ is an estimate of the cumulative baseline hazard. We first show how to obtain these predictions from the fitted object for both of our example landmark models and then move on to describe how to make dynamic predictions for  $t^* > s_l + w_l$.  Note that for our second landmark model with $w=\infty$, dynamic predictions can me made for all $t^*$ using the formula above.
 
 ### Within window dynamic predictions
 
