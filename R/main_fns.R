@@ -42,7 +42,7 @@ make_lm_data <- function(data, vars_tv, vars_tf, id, event_time, time, S,
         ## add in event time to time-fixed variable
         vars_tf <- unique(c(event_time, censor_var, vars_tf))
 
-        ##
+        ## number of landmark times
         nS <- length(S)
 
         if(length(w)==1) w = rep(w, nS)
@@ -87,14 +87,10 @@ make_lm_data <- function(data, vars_tv, vars_tf, id, event_time, time, S,
                 eval(call)
         }
 
-        # uid <- unique(data[[id]])
         uid <- attributes(data_tv_wide)$dimnames[[1]]
         nid <- length(uid)
-        # S_wide       <- rep(S, nid)
         data_tv_wide <- index_array(data_tv_wide, 1, value=rep(1:nrow(data_tv_wide), each=nS))
 
-        # dim_smat <- dim(data_tv_wide)[3]+1
-        # data_tv_wide[,,dim_smat] <- matrix(rep(S, each=dim(data_tv_wide)[2]), byrow=TRUE,ncol=dim(data_tv_wide)[2])
         smat <- matrix(rep(S, each=dim(data_tv_wide)[2]), byrow=TRUE,ncol=dim(data_tv_wide)[2])
         smat <- do.call(rbind, rep(list(smat), nid))
 

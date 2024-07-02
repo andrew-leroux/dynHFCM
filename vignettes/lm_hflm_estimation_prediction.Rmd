@@ -184,5 +184,163 @@ df_pred_lm_coef %>%
 ```
 
 
+## Dynamic predictions for survival curves 
+
+In addition to extracting the estimated shape of the functional coefficient, dynamic predictions of survival probabilities are often of interest and a key focus of the methodology. 
+
+Dynamic predictions obtained from the landmark historical functional Cox model are dependent on the landmark times ($\mathbf{s}$) window lengths, $\mathbf{w}=\{w_1,\ldots,w_L\}$, and how far into the future dynamic predictions are made. 
+If one is only interested in making dynamic predictions within a landmark time/prediciton window combination (i.e., for $s_l < t^* \leq s_l + w_l$), refereed hereafter as "within window" predictions, then 
+
+$$\hat{S}(t^*|X_i, Z_i^{\mathcal{H}}(s_l)) = \text{exp}\left\{-e^{X\hat{\beta}(s_l) + \int_{0}^{s_l} Z(u)\hat{\gamma}(u,s_l)du} \int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt \right\}\;,$$ 
+
+where $\hat{\beta}$ and $\hat{\gamma}$ are estimates from the model fit and $\int_{s_l}^{t^*} \hat{\lambda}_0(t|s_l)dt$ is an estimate of the cumulative baseline hazard. We first show how to obtain these predictions from the fitted object for both of our example landmark models and then move on to describe how to make dynamic predictions for  $t^* > s_l + w_l$.  dNote that for our second landmark model with $w=\infty$, dynamic predictions can me made for all $t^*$ using the formula above.
+
+### Within window dynamic predictions
+
+There are multiple ways to extract within-window dynamic predictions using Cox regression models estimated via the *mgcv* package. Here we will show several methods. The first step in any approach is to set up the data frame which will be supplied to the **predict.gam** function. 
+
+For simplicity we start by considering a single landmark time, $s_3 = 0.04$. Suppose we wish to make predictions for a set of $\mathbf{t}^* = \{t_1^*, \ldots, t_Q^*\}$ such that $s_3 < t^* < s_3 + w_3$ $\forall t \in \mathbf{t}^*$ with $w_3 = 0.02$ (landmark model 1). The data should contain one row per participant with $T_i > s_3$ per element of $\mathbf{t}^*$. In our example, the number of individuals in the risk set at $s_3$ is $|R(s_3)| = |R(0.04)| = 950$ (see code below). And suppose we wish to make predictions on a fine grid in $(s_3,s_3 + w_3)$ to plot individual survival curves. Recall that the model uses stratified Cox regression, allowing each landmark to have a landmark-specific baseline hazard estimate, estimated using the Breslow estimator, a step function. As such, the survival curves only change for $t^* \in \{T_i : d_i = 1, 1 \leq i \leq N \}$. 
+
+```{r dynamic_prediction_data_size}
+## get a data frame with one row per participant from the original data
+hfcm_sim_data_surv <- 
+  hfcm_sim_data %>% 
+  group_by(id) %>% 
+  slice(1) %>% 
+  ungroup()
+## how many participants have an event or are censored beyond s_3
+sum(hfcm_sim_data_surv$T > S[3]) ## 950
+## set grid of points to obtain predictions on
+t_star <- seq(S[3], S[3] + W1[3], len=50)
+```
+
+Returning to the software implementation to get dynamic predictions, we need to create a data frame where each row contains the components required for model fitting associated with $Z_i^{\mathcal{H}}(s_3)$ for all $i \in R(s_3)$, as well as the landmark information and prediction time. Luckily, for this simple case, the data object returned by the **make\_lm\_data** function can be used here as it contains all the components the model required to obtain predictions with the exception of the prediction times of interest. We create the desired data frame by subsetting the data object returned by the **make\_lm\_data** to those participants in $R(s_3)$, creating a separate data frame with all combinations of $i$ and $\mathbf{t}^*$, left joining the data frames, then filtering out $t \notin \mathbf{t}^*$. The code below sets up this data frame.
+
+```{r dynamic_prediction_data}
+## get s_3 data
+data_lm_S3 <- 
+  data_lm_w1 %>% 
+  ## filter to just landmark time of interest
+  filter(s == S[3])
+## create data frame with all unique combinations of:
+##  each id in the risk set and prediction time of interest
+df_t_star_s_3 <- 
+  expand.grid(id = unique(data_lm_S3$id),
+              event_time_lm = t_star)
+
+data_lm_S3_pred <-
+  ## left join the data frames
+  left_join(df_t_star_s_3, 
+            ## drop observed event times in the data, unneeded for prediction
+            ## this functionally filters out prediction times not of interest
+            dplyr::select(data_lm_S3, -event_time_lm), by="id") 
+```
+
+Having set up the data frame, obtaining survival curves is as simple as making a call to **predict.gam** with the argument type="response" (indicating predictions on the response scale, or survival probability). We then merge those predictions back with participant ids and event times for plotting
 
 
+```{r dynamic_prediction_call, include=F, eval=F}
+## get the predictions
+surv_preds_S3 <- 
+  predict.gam(fit_lm_w1, newdata=data_lm_S3_pred, type='response')
+## combine with prediction data frame for plotting (participant IDs with event times and predictions)
+surv_preds_S3 <- data.frame(dplyr::select(data_lm_S3_pred, id, event_time_lm, s), "S_hat" = surv_preds_S3)
+str(surv_preds_S3)
+```
+
+The code below plots survival curve estimates for the first 12 participant ids
+
+```{r dynamic_prediction_plot, include=F, eval=F, fig.height=5, fig.width=7, fig.align="center"}
+surv_preds_S3 %>%
+  filter(id %in% unique(.$id)[1:10]) %>%
+  ggplot() + 
+  geom_step(aes(x=event_time_lm, y=S_hat,color=id)) + 
+  ylab(expression(Pr(T[i] > t~"|" ~ T[i] > s[3]))) + 
+  xlab("Event time (t)") + 
+  theme_classic()
+```
+
+This same idea can be applied to get within window predictions, conditional survival probability predictions for every landmark time at once by considering all combinations of landmark times, prediction windows, participant ids, prediction times, and observed event times. Then merge that data with the landmark data set. Unfortunately this will tend to create a very large data frame that may exceed RAM limits for many common work environments. Here, we bypass this issue by only looking making predictions for the first 25 participant id's. This procedure could be split by participant id, landmark time, or any split desired by the user depending on their purpose and computational limitations.. 
+
+
+```{r dynamic_prediction_data_all}
+## create data frame with all unique combinations of:
+##  each id in the risk set and prediction time of interest
+## all observed event times and a sequence of points on the range of T
+t_star_all <- sort(unique( c(unique(hfcm_sim_data$T[hfcm_sim_data$E==1]), 
+                             seq(0,1,len=100)) 
+                           )
+                   )
+data_lm_all_pred <- 
+  expand.grid(id = unique(hfcm_sim_data$id)[1:25],
+              s = S,
+              event_time_lm = t_star_all) %>% 
+  ## join with survival data, filter to times before observed events
+  left_join(hfcm_sim_data_surv) %>% 
+  filter(s < T, event_time_lm >= s, event_time_lm <= s + 0.02) %>% 
+  ## get just variables of interest
+  dplyr::select(id, s, event_time_lm) %>% 
+  ## convert variable type for merging
+  mutate(id = factor(id)) %>% 
+  ## join with landmark dataset
+  left_join(dplyr::select(data_lm_w1 , -event_time_lm), by=c("id","s"))
+            
+```
+
+Then we get predictions in the exact same way as before
+
+```{r dynamic_prediction_predict_all}
+surv_preds_all <- 
+  predict.gam(fit_lm_w1, newdata=data_lm_all_pred, type='response')
+## combine with prediction data frame for plotting (participant IDs with event times and predictions)
+surv_preds_all <- data.frame(dplyr::select(data_lm_all_pred, id, event_time_lm, s), "S_hat" = surv_preds_all)
+str(surv_preds_all)
+```
+
+We can now plot the landmark-specific conditional probability of survival for each participant id. In the plot below each panel represents a participant, with color indicating landmark time. A few things are worth noting. First, the scale is hard to see due to differential predicted survival probabilities for participant id 13 and 19 for later landmark times. Additionally, note the fact that the survival probabilities are not non-increasing. This is because these are conditional probabilties and are thus "reset" at 1 for each landmark time. Further, note that survival predictions are not available over the entire follow-up for all individuals. This is a result of their being censored or experiencing the event. In the absence of longitudinal data, predictions beyond $\text{max_{s \in \mathbf{s}}(s: s < T_i)}$ require dynamic prediction of the longitudinal predictor (a topic for a future vignette). 
+
+```{r dynamic_prediction_plot_all, fig.height=10, fig.width=15}
+surv_preds_all %>% 
+  mutate(s = factor(s)) %>% 
+  ggplot() + 
+  geom_line(aes(x=event_time_lm, y=S_hat, color=s, group=s)) + 
+  facet_wrap(~id, ncol=5) + 
+    ylab(expression(Pr(T[i] > t~"|" ~ T[i] > s))) + 
+  xlab("Event time (t)") +
+  theme_classic()
+```
+
+
+However, we can obtain complete predicted survival curves (at least for fully observed data). The code below implements the method described in the manuscript. 
+
+
+```{r surv_curves_full_pred}
+surv_preds_all_comp <- 
+  surv_preds_all %>% 
+  group_by(id) %>% 
+  arrange(s, event_time_lm) %>% 
+  mutate(delta_s = c(NA,diff(s)),
+         S_hat_lag = c(NA, S_hat[-n()]),
+         mult_fac = ifelse(delta_s != 0 & !is.na(delta_s), S_hat_lag, 1),
+         mult_fac = cumprod(mult_fac)) %>%
+  group_by(id, s) %>% 
+  mutate(mult_fac = mult_fac[1],
+         S_hat_full = S_hat * mult_fac) %>% 
+  ungroup() %>% 
+  arrange(id, s, event_time_lm) 
+
+```
+
+Then we can plot $\hat{P}(T_i > t)$ as before, with each panel representing a unique participant identifier.
+
+```{r surv_curves_full_plot, fig.height=10, fig.width=15}
+surv_preds_all_comp %>% 
+  mutate(s = factor(s)) %>% 
+  ggplot() + 
+  geom_line(aes(x=event_time_lm, y=S_hat_full)) + 
+  facet_wrap(~id, ncol=5) + 
+    ylab(expression(Pr(T[i] > t))) + 
+  xlab("Event time (t)") +
+  theme_classic()
+
+```
