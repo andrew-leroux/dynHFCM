@@ -305,13 +305,13 @@ models is extremely fast.</p>
 <span><span class="va">st_time_lm_w1</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">fit_lm_w1</span> <span class="op">&lt;-</span> <span class="fu">gam</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">event_time_lm</span>, <span class="va">s</span><span class="op">)</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">tind</span>, <span class="va">smat</span>, by<span class="op">=</span><span class="va">Z_int_cn</span><span class="op">)</span>, family<span class="op">=</span><span class="va">cox.ph</span>, weights<span class="op">=</span><span class="va">event_lm</span>, data<span class="op">=</span><span class="va">data_lm_w1</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">fit_time_lm_w1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">st_time_lm_w1</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 0.09381125 mins</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 0.09216558 mins</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fit landmark model with w=infinity</span></span>
 <span><span class="va">st_time_lm_w2</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">fit_lm_w2</span> <span class="op">&lt;-</span> <span class="fu">gam</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">event_time_lm</span>, <span class="va">s</span><span class="op">)</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">tind</span>, <span class="va">smat</span>, by<span class="op">=</span><span class="va">Z_int_cn</span><span class="op">)</span>, family<span class="op">=</span><span class="va">cox.ph</span>, weights<span class="op">=</span><span class="va">event_lm</span>, data<span class="op">=</span><span class="va">data_lm_w2</span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">fit_time_lm_w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">st_time_lm_w2</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 0.09542605 mins</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 0.09587743 mins</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -384,7 +384,7 @@ fit and <span class="math inline">\(\int_{s_l}^{t^*}
 \hat{\lambda}_0(t|s_l)dt\)</span> is an estimate of the cumulative
 baseline hazard. We first show how to obtain these predictions from the
 fitted object for both of our example landmark models and then move on
-to describe how to make dynamic predictions for <span class="math inline">\(t^* &gt; s_l + w_l\)</span>. dNote that for our
+to describe how to make dynamic predictions for <span class="math inline">\(t^* &gt; s_l + w_l\)</span>. Note that for our
 second landmark model with <span class="math inline">\(w=\infty\)</span>, dynamic predictions can me made
 for all <span class="math inline">\(t^*\)</span> using the formula
 above.</p>
